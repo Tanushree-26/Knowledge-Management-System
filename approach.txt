@@ -1,0 +1,28 @@
+KNOWLEDGE MANAGEMENT SYSTEM - FULL PROJECT APPROACH
+
+1. DATA ACQUISITION & AUTHENTICATION (Google Drive)
+The pipeline begins by authenticating securely via OAuth2 to Google Drive. It securely queries a specific target folder for PDF documents, downloading them into a temporary local directory to stage them for fast processing.
+
+2. HIGH-SPEED PARSING & EXTRACTION (PyPDFLoader)
+To ensure processing doesn't bottleneck on massive ~250-page reports, the system utilizes LangChain's 'PyPDFLoader' alongside multithreading. This rips underlying textual streams directly from the PDF data structures (completely bypassing slow image-based OCR tools like Tesseract), reducing ingestion delays from multiple hours to a matter of seconds.
+
+3. DOCUMENT CHUNKING & API THROTTLING (Free Tier Quota Management)
+Parsed documents pass through a RecursiveCharacterTextSplitter configured natively for 1200-character chunks with a 250-character semantic overlap. Because the Google Gemini Embedding API restricts Free Tier pipelines to exactly 100 requests per minute, a custom looping throttle dictates the upload. It strictly fires structural batches of 80 chunks and pauses for a full 60 seconds afterward—guaranteeing no '429 RESOURCE_EXHAUSTED' errors.
+
+4. STRUCTURED METADATA CATALOGING (SQLite)
+Independent from the semantic engine, specific business-class metadata attributes associated with each synced file are captured. A local SQLite Database ('metadata.db') is provisioned specifically to establish structured relationships defining the 'Project Title', 'Company Name', 'Report Objective', and 'Mimetype'—generating a relational map to back the semantic engine.
+
+5. SEMANTIC EMBEDDING & STORAGE (Chroma DB)
+The throttled text chunks are embedded systematically using Google's 'models/gemini-embedding-001' vector space framework. The resulting n-dimensional coordinate arrays are pipelined aggressively into a locally persistent Chroma Vector Database enabling lightning-fast distance searches.
+
+6. CONVERSATIONAL RAG ENGINE (Gemini 2.5 Flash)
+User queries fire vector cosine-similarity calculations against ChromaDB to extract the top-K relevant chunk coordinates. These highly relevant text sequences are then fed directly as isolated Context Blocks into a Google 'gemini-2.5-flash' reasoning LLM. 
+
+7. STRICT CONFIDENTIALITY ENGINEERING (System Prompt Constraints)
+To ensure the LLM never spills sensitive enterprise reporting parameters, it operates mapped to a non-negotiable instruction set. This strict system prompt forces the model to perform solely as an "expert project consultant". It restricts generative outputs entirely to insights surrounding the domain of the project itself (e.g., car emissions formulas, solar power integrations) while natively scrubbing and refusing to render confidential company names, financial revenue markers, or underlying business secrets.
+
+8. FRONTEND DASHBOARD (Streamlit)
+Users communicate with the AI engine via a cohesive local graphical web app built with Python Streamlit. It presents a dynamic Chat Interface equipped with generative output responses mapped securely to their explicit underlying file citations. A secondary pane provides a "Knowledge Browser" connected directly back to the SQLite metadata table, allowing humans to audit exactly what files compose the brain of the chatbot.
+
+9. ENTERPRISE ARCHITECTURE EVOLUTION (Static Blob Storage)
+To scale this architecture to a fully decoupled enterprise production level: Raw PDF documents will be synced out of Drive directly into a static Data Lake (AWS S3, Azure Blob Storage). The Chroma Vector Engine will decouple from localized file scripting, instead maintaining a static routing mechanism directly to the Blob bucket. Anytime raw assets are introduced or altered in the underlying Blob Storage, an event-driven lambda framework will seamlessly detect the change and natively generate the new embeddings without manual script execution loops.
