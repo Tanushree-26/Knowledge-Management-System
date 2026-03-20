@@ -1,4 +1,4 @@
-# Knowledge Management System (KMS) - Semantic RAG Assistant
+# Knowledge Management System -RAG Assistant
 
 An intelligent, secure, and fully local Document Retrieval-Augmented Generation (RAG) system. This application effortlessly syncs documents from a specified Google Drive folder, parses the textual data at high speed, and stores it in a sophisticated vector database. 
 
