@@ -1,0 +1,17 @@
+pytest
+streamlit
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+langchain
+langchain-google-genai
+langchain-community
+langchain-chroma
+langchain-text-splitters
+chromadb
+python-dotenv
+unstructured
+pdfminer.six
+pikepdf
+pypdf
+docx2txt

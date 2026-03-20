@@ -1,0 +1,19 @@
+Objective:
+To develop a functional RAG (Retrieval-Augmented Generation) prototype that securely connects to a Google Drive repository, 
+indexes document content into a vector store, and allows users to query that data using a Semantic Assistant (LLM) with source-backed responses.
+
+Procedure:
+1) Get the data from the google drive and create the vectore storage, metadata storage: this file needs to be run first to populate the vector store and metadata store
+
+2) Then run the file which performs the RAG pipeline: searches from the vector store and metadata store and provides the answer to the user
+
+
+File Structure:
+1) Requirements.txt
+2) credentials.json
+3) ingest_drive.py: This script connects to Google Drive, downloads files, chunks the text, and pushes them to your vector database
+4) vectore_store.py: manages the vectore database
+5) metadata_store.py: manages the metadata of the documents
+6) engine.py: This contains the RAG pipeline—taking a user query, searching the vector store, and sending the prompt to the LLM
+app.py: A Streamlit script that creates the web-based "Search & Q&A" interface for the user.
+7) .env: to secure the api keys and google folder ids
